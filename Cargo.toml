@@ -1,0 +1,14 @@
+[package]
+name = "hasura-fetch-example"
+description = "Very short Axum example that exposes OpenAPI json file. Based on https://github.com/juhaku/utoipa/tree/master/examples/simple-axum"
+version = "1.0.0"
+edition = "2021"
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = "0.7"
+tokio = { version = "1.17", features = ["full"] }
+utoipa = { version = "5", features = ["axum_extras"] }
+tower-http = {version = "0.6.2", features = ["compression-gzip"]}
