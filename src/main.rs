@@ -1,11 +1,11 @@
 use std::net::SocketAddr;
 
 use axum::{routing::get, Json};
-use utoipa::OpenApi;
+use utoipa::{OpenApi,ToSchema};
 use tower_http::compression::CompressionLayer;
 
 #[derive(OpenApi)]
-#[openapi(paths(openapi,helloworld))]
+#[openapi(paths(openapi,helloworld,complexdata))]
 struct ApiDoc;
 
 /// Return JSON version of an OpenAPI schema
@@ -32,6 +32,30 @@ async fn helloworld() -> String {
     return String::from("{\"message\": \"Hello world! ABCDEFGHIJKLMNOPQRSTUVWXYZ.\"}");
 }
 
+// Return a more complex data structure
+#[derive(ToSchema)]
+struct MyStruct {
+    my_string: String,
+    my_bool: bool,
+    my_int: i32,
+}
+
+#[derive(ToSchema)]
+struct ComplexData {
+    data: Vec<MyStruct>
+}
+
+#[utoipa::path(
+    get,
+    path = "/complexdata",
+    responses(
+        (status=200, description = "Complex data type", body = Vec<ComplexData>)
+    )
+)]
+async fn complexdata() -> String {
+    return String::from("[{\"data\": [{\"my_string\": \"my complex data\", \"my_bool\": true, \"my_int\": 144}]}]");
+}
+
 #[tokio::main]
 async fn main() {
     let args: Vec<String> = std::env::args().collect();
@@ -45,7 +69,8 @@ async fn main() {
 
     let mut app = axum::Router::new()
         .route("/api-docs/openapi.json", get(openapi))
-        .route("/helloworld", get(helloworld));
+        .route("/helloworld", get(helloworld))
+        .route("/complexdata", get(complexdata));
 
     // testing to see if server breaks when gzip middleware is present
     // trigger when any command line argument is provided
