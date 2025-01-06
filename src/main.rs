@@ -29,7 +29,7 @@ async fn openapi() -> Json<utoipa::openapi::OpenApi> {
     )
 )]
 async fn helloworld() -> String {
-    return String::from("Hello world! ABCDEFGHIJKLMNOPQRSTUVWXYZ.");
+    return String::from("{\"message\": \"Hello world! ABCDEFGHIJKLMNOPQRSTUVWXYZ.\"}");
 }
 
 #[tokio::main]
